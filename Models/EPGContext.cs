@@ -104,6 +104,8 @@ namespace EPG_Api.Models
                 entity.Property(e => e.StartTime)
                     .HasColumnType("datetime")
                     .HasColumnName("start_time");
+
+                entity.Property(e => e.Status).HasColumnName("status");
             });
 
             OnModelCreatingPartial(modelBuilder);

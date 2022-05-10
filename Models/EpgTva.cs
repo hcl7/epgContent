@@ -26,5 +26,6 @@ namespace EPG_Api.Models
         public DateTime? DateProd { get; set; }
         public byte[] Genre { get; set; }
         public string Channel { get; set; }
+        public short? Status { get; set; }
     }
 }
