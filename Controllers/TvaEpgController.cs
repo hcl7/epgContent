@@ -76,6 +76,8 @@ namespace EPG_Api.Controllers
                 CdNibble1 = s.CdNibble1,
                 CdNibble2 = s.CdNibble2,
                 PrdCountryCode = s.PrdCountryCode,
+                Poster = s.Poster,
+                Trailer = s.Trailer,
                 PrdValue = s.PrdValue,
             }).ToList();
             epg.Dispose();
@@ -110,6 +112,8 @@ namespace EPG_Api.Controllers
                 result.CdNibble2 = data.CdNibble2;
                 result.PrdCountryCode = data.PrdCountryCode;
                 result.PrdValue = data.PrdValue;
+                result.Poster = data.Poster;
+                result.Trailer = data.Trailer;
                 result.Status = 1;
                 epg.SaveChanges();
                 epg.Dispose();

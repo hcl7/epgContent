@@ -27,5 +27,7 @@ namespace EPG_Api.Models
         public byte[] Genre { get; set; }
         public string Channel { get; set; }
         public short? Status { get; set; }
+        public string Poster { get; set; }
+        public string Trailer { get; set; }
     }
 }

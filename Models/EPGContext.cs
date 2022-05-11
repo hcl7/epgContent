@@ -71,6 +71,14 @@ namespace EPG_Api.Models
                     .IsUnicode(false)
                     .HasColumnName("eed_text_eng");
 
+                entity.Property(e => e.Poster)
+                   .IsUnicode(false)
+                   .HasColumnName("poster");
+
+                entity.Property(e => e.Trailer)
+                   .IsUnicode(false)
+                   .HasColumnName("trailer");
+
                 entity.Property(e => e.Eid).HasColumnName("eid");
 
                 entity.Property(e => e.Genre)
