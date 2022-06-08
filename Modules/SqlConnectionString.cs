@@ -4,7 +4,7 @@ using System.Text;
 
 class SqlConnectionString
 {
-    private static string datasource = "DESKTOP-TN9SQSG";
+    private static string datasource = "aida-pc";
     private static string[] database = { "EPG" };
     private static string username = "seven";
     private static string password = "root@123";

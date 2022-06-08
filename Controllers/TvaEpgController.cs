@@ -4,11 +4,13 @@ using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using EPG_Api.Attributes;
 
 namespace EPG_Api.Controllers
 {
     [Route("api/[controller]/{action}")]
     [ApiController]
+    [ApiKey]
     public class TvaEpgController : ControllerBase
     {
         public IActionResult View()
