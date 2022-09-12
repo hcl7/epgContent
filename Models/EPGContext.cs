@@ -17,7 +17,9 @@ namespace EPG_Api.Models
         {
         }
 
-        public virtual DbSet<EpgTva> EpgTvas { get; set; }
+        public virtual DbSet<Credit> Credits { get; set; }
+        public virtual DbSet<Epg> Epgs { get; set; }
+        public virtual DbSet<User> Users { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -31,9 +33,38 @@ namespace EPG_Api.Models
         {
             modelBuilder.HasAnnotation("Relational:Collation", "SQL_Latin1_General_CP1_CI_AS");
 
-            modelBuilder.Entity<EpgTva>(entity =>
+            modelBuilder.Entity<Credit>(entity =>
             {
-                entity.ToTable("EPG_TVA");
+                entity.ToTable("credits");
+
+                entity.Property(e => e.Id)
+                    .ValueGeneratedNever()
+                    .HasColumnName("id");
+
+                entity.Property(e => e.AssetId).HasColumnName("assetId");
+
+                entity.Property(e => e.DateInserted)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dateInserted");
+
+                entity.Property(e => e.Name)
+                    .IsUnicode(false)
+                    .HasColumnName("name");
+
+                entity.Property(e => e.Role)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("role");
+
+                entity.HasOne(d => d.Asset)
+                    .WithMany(p => p.Credits)
+                    .HasForeignKey(d => d.AssetId)
+                    .HasConstraintName("FK_credits_EPG_TVA");
+            });
+
+            modelBuilder.Entity<Epg>(entity =>
+            {
+                entity.ToTable("EPGS");
 
                 entity.Property(e => e.Id).HasColumnName("id");
 
@@ -54,66 +85,96 @@ namespace EPG_Api.Models
                     .IsUnicode(false)
                     .HasColumnName("duration");
 
-                entity.Property(e => e.EedLangAlb)
-                    .HasMaxLength(50)
-                    .IsUnicode(false)
-                    .HasColumnName("eed_lang_alb");
-
-                entity.Property(e => e.EedLangEng)
-                    .IsUnicode(false)
-                    .HasColumnName("eed_lang_eng");
-
-                entity.Property(e => e.EedTextAlb)
-                    .IsUnicode(false)
-                    .HasColumnName("eed_text_alb");
-
-                entity.Property(e => e.EedTextEng)
-                    .IsUnicode(false)
-                    .HasColumnName("eed_text_eng");
-
-                entity.Property(e => e.Poster)
-                   .IsUnicode(false)
-                   .HasColumnName("poster");
-
-                entity.Property(e => e.Trailer)
-                   .IsUnicode(false)
-                   .HasColumnName("trailer");
-
                 entity.Property(e => e.Eid).HasColumnName("eid");
+
+                entity.Property(e => e.ExtendedAlb)
+                    .IsUnicode(false)
+                    .HasColumnName("extended_alb");
+
+                entity.Property(e => e.ExtendedEng)
+                    .IsUnicode(false)
+                    .HasColumnName("extended_eng");
 
                 entity.Property(e => e.Genre)
                     .HasMaxLength(250)
                     .HasColumnName("genre");
+
+                entity.Property(e => e.Poster)
+                    .IsUnicode(false)
+                    .HasColumnName("poster");
+
+                entity.Property(e => e.Prd).HasColumnName("prd");
 
                 entity.Property(e => e.PrdCountryCode)
                     .HasMaxLength(50)
                     .IsUnicode(false)
                     .HasColumnName("prd_country_code");
 
-                entity.Property(e => e.PrdValue).HasColumnName("prd_value");
+                entity.Property(e => e.Rating).HasColumnName("rating");
 
-                entity.Property(e => e.SedLangAlb)
-                    .HasMaxLength(50)
+                entity.Property(e => e.ShortAlb)
                     .IsUnicode(false)
-                    .HasColumnName("sed_lang_alb");
+                    .HasColumnName("short_alb");
 
-                entity.Property(e => e.SedLangEng)
+                entity.Property(e => e.ShortEng)
                     .IsUnicode(false)
-                    .HasColumnName("sed_lang_eng");
-
-                entity.Property(e => e.SedNameAlb)
-                    .IsUnicode(false)
-                    .HasColumnName("sed_name_alb");
-
-                entity.Property(e => e.SedNameEng)
-                    .IsUnicode(false)
-                    .HasColumnName("sed_name_eng");
+                    .HasColumnName("short_eng");
 
                 entity.Property(e => e.StartTime)
                     .HasColumnType("datetime")
                     .HasColumnName("start_time");
 
                 entity.Property(e => e.Status).HasColumnName("status");
+
+                entity.Property(e => e.Trailer)
+                    .IsUnicode(false)
+                    .HasColumnName("trailer");
+            });
+
+            modelBuilder.Entity<User>(entity =>
+            {
+                entity.ToTable("users");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Apikey)
+                    .IsUnicode(false)
+                    .HasColumnName("apikey");
+
+                entity.Property(e => e.Company)
+                    .IsUnicode(false)
+                    .HasColumnName("company");
+
+                entity.Property(e => e.Dateinserted)
+                    .HasColumnType("datetime")
+                    .HasColumnName("dateinserted");
+
+                entity.Property(e => e.Email)
+                    .IsUnicode(false)
+                    .HasColumnName("email");
+
+                entity.Property(e => e.Fname)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("fname");
+
+                entity.Property(e => e.Lname)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("lname");
+
+                entity.Property(e => e.Nrequests).HasColumnName("nrequests");
+
+                entity.Property(e => e.Passwd)
+                    .IsUnicode(false)
+                    .HasColumnName("passwd");
+
+                entity.Property(e => e.Subscription).HasColumnName("subscription");
+
+                entity.Property(e => e.Usr)
+                    .HasMaxLength(50)
+                    .IsUnicode(false)
+                    .HasColumnName("usr");
             });
 
             OnModelCreatingPartial(modelBuilder);

@@ -27,6 +27,7 @@ namespace EPG_Api
         {
             services.AddControllers();
             services.AddCors();
+            //services.AddScoped<JwtService>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

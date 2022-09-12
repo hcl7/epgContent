@@ -1,9 +1,9 @@
-﻿using EPG_Api.Models;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System.Linq;
 using System;
-using System.Collections.Generic;
+using EPG_Api.Models;
+using EPG_Api.Modules;
 
 namespace EPG_Api.Controllers
 {
@@ -11,7 +11,7 @@ namespace EPG_Api.Controllers
     [ApiController]
     public class AuthController : ControllerBase
     {
-        /*[HttpPost]
+        [HttpPost]
         public IActionResult Register([FromBody] User usr)
         {
             if (usr == null)
@@ -23,7 +23,7 @@ namespace EPG_Api.Controllers
             {
                 Usr = usr.Usr,
                 Email = usr.Email,
-                Pass = BCrypt.Net.BCrypt.HashPassword(usr.Pass)
+                Passwd = BCrypt.Net.BCrypt.HashPassword(usr.Passwd)
             };
             client.Users.Add(user);
             client.SaveChanges();
@@ -38,11 +38,11 @@ namespace EPG_Api.Controllers
             {
                 Id = s.Id,
                 Usr = s.Usr,
-                Pass = s.Pass,
+                Passwd = s.Passwd,
                 Email = s.Email
             }).FirstOrDefault();
             if (user == null) return BadRequest(new { message = "Invalid Credentials!" });
-            if (!BCrypt.Net.BCrypt.Verify(usr.Pass, user.Pass))
+            if (!BCrypt.Net.BCrypt.Verify(usr.Passwd, user.Passwd))
             {
                 return BadRequest(new { message = "Invalid Credentials!" });
             }
@@ -85,6 +85,6 @@ namespace EPG_Api.Controllers
             {
                 message = "Logged Out!"
             });
-        }*/
+        }
     }
 }

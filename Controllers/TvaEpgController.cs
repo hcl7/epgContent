@@ -1,10 +1,10 @@
-﻿using EPG_Api.Models;
-using Microsoft.AspNetCore.Http;
+﻿using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using EPG_Api.Attributes;
+using EPG_Api.Models;
 
 namespace EPG_Api.Controllers
 {
@@ -16,12 +16,12 @@ namespace EPG_Api.Controllers
         public IActionResult View()
         {
             EPGContext epg = new EPGContext();
-            var result = epg.EpgTvas.Where(x => x.Status == 1).ToList();
+            var result = epg.Epgs.Where(x => x.Status == 1).ToList();
             return Ok(result);
         }
 
         [HttpPost]
-        public IActionResult Insert([FromForm] EpgTva data)
+        public IActionResult Insert([FromForm] Epg data)
         {
             EPGContext epg = new EPGContext();
             try
@@ -30,7 +30,7 @@ namespace EPG_Api.Controllers
                 {
                     return BadRequest("Post Mismatch!");
                 }
-                var result = epg.EpgTvas.FirstOrDefault(x => x.SedNameEng == data.SedNameEng);
+                var result = epg.Epgs.FirstOrDefault(x => x.ShortEng == data.ShortEng);
                 if (result != null)
                 {
                     result.StartTime = data.StartTime;
@@ -41,7 +41,7 @@ namespace EPG_Api.Controllers
                 }
                 else
                 {
-                    epg.EpgTvas.AddRange(data);
+                    epg.Epgs.AddRange(data);
                     epg.SaveChanges();
                     epg.Dispose();
                     return Ok("Inserted!");
@@ -59,28 +59,24 @@ namespace EPG_Api.Controllers
         public IActionResult Detail(int Id)
         {
             EPGContext epg = new EPGContext();
-            List<EpgTva> result = new List<EpgTva>();
+            List<Epg> result = new List<Epg>();
 
-            result = epg.EpgTvas.Where(w => w.Id == Id).Select(s => new EpgTva()
+            result = epg.Epgs.Where(w => w.Id == Id).Select(s => new Epg()
             {
                 Id = s.Id,
                 Eid = s.Eid,
                 StartTime = s.StartTime,
                 Duration = s.Duration,
-                SedNameAlb = s.SedNameAlb,
-                SedLangAlb = s.SedLangAlb,
-                SedNameEng = s.SedNameEng,
-                SedLangEng = s.SedLangEng,
-                EedTextAlb = s.EedTextAlb,
-                EedLangAlb = s.EedLangAlb,
-                EedTextEng = s.EedTextEng,
-                EedLangEng = s.EedLangEng,
+                ShortAlb = s.ShortAlb,
+                ShortEng = s.ShortEng,
+                ExtendedAlb = s.ExtendedAlb,
+                ExtendedEng = s.ExtendedEng,
                 CdNibble1 = s.CdNibble1,
                 CdNibble2 = s.CdNibble2,
                 PrdCountryCode = s.PrdCountryCode,
                 Poster = s.Poster,
                 Trailer = s.Trailer,
-                PrdValue = s.PrdValue,
+                Prd = s.Prd,
             }).ToList();
             epg.Dispose();
             if (result == null)
@@ -91,7 +87,7 @@ namespace EPG_Api.Controllers
         }
 
         [HttpPost("{id}")]
-        public IActionResult Update(int id, [FromForm] EpgTva data)
+        public IActionResult Update(int id, [FromForm] Epg data)
         {
             EPGContext epg = new EPGContext();
             try
@@ -100,20 +96,17 @@ namespace EPG_Api.Controllers
                 {
                     return BadRequest("Id Mismatch!");
                 }
-                var result = epg.EpgTvas.FirstOrDefault(x => x.Id == id);
+                var result = epg.Epgs.FirstOrDefault(x => x.Id == id);
                 result.StartTime = data.StartTime;
                 result.Duration = data.Duration;
-                result.SedNameAlb = data.SedNameAlb;
-                result.SedLangAlb = data.SedLangAlb;
-                result.SedNameEng = data.SedNameEng;
-                result.SedLangEng = data.SedLangEng;
-                result.EedTextAlb = data.EedTextAlb;
-                result.EedLangAlb = data.EedLangAlb;
-                result.EedTextEng = data.EedTextEng;
+                result.ShortAlb = data.ShortAlb;
+                result.ShortEng = data.ShortEng;
+                result.ExtendedAlb = data.ExtendedAlb;
+                result.ExtendedEng = data.ExtendedEng;
                 result.CdNibble1 = data.CdNibble1;
                 result.CdNibble2 = data.CdNibble2;
                 result.PrdCountryCode = data.PrdCountryCode;
-                result.PrdValue = data.PrdValue;
+                result.Prd = data.Prd;
                 result.Poster = data.Poster;
                 result.Trailer = data.Trailer;
                 result.Status = 1;
