@@ -13,10 +13,11 @@ namespace EPG_Api.Controllers
     [ApiKey]
     public class TvaEpgController : ControllerBase
     {
-        public IActionResult View()
+        [HttpPost]
+        public IActionResult View([FromForm] string channel)
         {
             EPGContext epg = new EPGContext();
-            var result = epg.Epgs.Where(x => x.Status == 1).ToList();
+            var result = epg.Epgs.Where(x => x.Status == 1 && x.Channel.Equals(channel)).ToList();
             return Ok(result);
         }
 
