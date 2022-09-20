@@ -14,10 +14,28 @@ namespace EPG_Api.Controllers
     public class TvaEpgController : ControllerBase
     {
         [HttpPost]
-        public IActionResult View([FromForm] string channel)
+        public IActionResult View([FromForm] string query, [FromForm] string channel)
         {
-            EPGContext epg = new EPGContext();
-            var result = epg.Epgs.Where(x => x.Status == 1 && x.Channel.Equals(channel)).ToList();
+            List<Epg> result = new List<Epg>();
+            if (!string.IsNullOrEmpty(query))
+            {
+                EPGContext epg = new EPGContext();
+                result = epg.Epgs.Where(x => x.Status == 0 && x.Channel.Equals(channel) && x.ShortEng!.Contains(query ?? string.Empty)).ToList();
+                epg.Dispose();
+            }
+            return Ok(result);
+        }
+
+        [HttpPost]
+        public IActionResult ListExport([FromForm] string channel)
+        {
+            List<Epg> result = new List<Epg>();
+            if (!string.IsNullOrEmpty(channel))
+            {
+                EPGContext epg = new EPGContext();
+                result = epg.Epgs.Where(x => x.Status == 1 && x.Channel.Equals(channel)).ToList();
+                epg.Dispose();
+            }
             return Ok(result);
         }
 

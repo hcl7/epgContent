@@ -20,6 +20,7 @@ namespace EPG_Api.Models
         public virtual DbSet<Credit> Credits { get; set; }
         public virtual DbSet<Epg> Epgs { get; set; }
         public virtual DbSet<User> Users { get; set; }
+        public virtual DbSet<Channels> Channels { get; set; }
 
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
@@ -175,6 +176,22 @@ namespace EPG_Api.Models
                     .HasMaxLength(50)
                     .IsUnicode(false)
                     .HasColumnName("usr");
+            });
+
+            modelBuilder.Entity<Channels>(entity =>
+            {
+                entity.ToTable("channels");
+
+                entity.Property(e => e.Id).HasColumnName("id");
+
+                entity.Property(e => e.Channel)
+                    .IsUnicode(false)
+                    .HasColumnName("channel");
+
+                entity.Property(e => e.Status)
+                    .IsUnicode(false)
+                    .HasColumnName("status");
+
             });
 
             OnModelCreatingPartial(modelBuilder);
