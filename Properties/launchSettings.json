@@ -20,7 +20,7 @@
     "EPG_Api": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "weatherforecast",
+      "launchUrl": "api/tvaepg/view",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
       },

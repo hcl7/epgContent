@@ -4,6 +4,7 @@ using System.Linq;
 using System;
 using EPG_Api.Models;
 using EPG_Api.Modules;
+using System.Security.Cryptography;
 
 namespace EPG_Api.Controllers
 {
@@ -33,6 +34,10 @@ namespace EPG_Api.Controllers
         [HttpPost]
         public IActionResult Login([FromBody] User usr)
         {
+            if(usr == null)
+            {
+                return Ok("Post is Empty!");
+            }
             Models.EPGContext client = new Models.EPGContext();
             var user = client.Users.Where(x => x.Email == usr.Email).Select(s => new User()
             {
@@ -49,9 +54,29 @@ namespace EPG_Api.Controllers
             var jwt = JwtService.Generate(usr);
             Response.Cookies.Append("jwt", jwt, new CookieOptions { HttpOnly = true });
             client.Dispose();
-            return Ok(new { jwt, user });
+            return Ok(new { jwt, user, message = "Logged In!" });
         }
 
+        public string GenerateApiKey()
+        {
+            var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+            var stringChars = new char[16];
+            var random = new Random();
+            for (int i = 0; i < stringChars.Length; i++)
+            {
+                stringChars[i] = chars[random.Next(chars.Length)];
+            }
+            var finalString = new String(stringChars);
+            return finalString;
+        }
+        public string ApiKeyGen()
+        {
+            var key = new byte[16];
+            using (var generator = RandomNumberGenerator.Create())
+                generator.GetBytes(key);
+            string apiKey = Convert.ToBase64String(key);
+            return apiKey;
+        }
         public User GetByEmail(string email)
         {
             Models.EPGContext client = new Models.EPGContext();
