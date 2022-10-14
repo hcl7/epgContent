@@ -18,5 +18,7 @@ namespace EPG_Api.Models
         public short? Subscription { get; set; }
         public DateTime? Dateinserted { get; set; }
         public string Company { get; set; }
+        public int? AccountStatus { get; set; }
+        public string VerifyCode { get; set; }
     }
 }

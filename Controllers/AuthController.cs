@@ -20,16 +20,33 @@ namespace EPG_Api.Controllers
                 return BadRequest("Post Mismatch!");
             }
             Models.EPGContext client = new Models.EPGContext();
-            var user = new User
+            var checkEmailExists = client.Users.Where(w => w.Email.Equals(usr.Email)).SingleOrDefault();
+            if (checkEmailExists != null)
             {
-                Usr = usr.Usr,
-                Email = usr.Email,
-                Passwd = BCrypt.Net.BCrypt.HashPassword(usr.Passwd)
-            };
-            client.Users.Add(user);
-            client.SaveChanges();
-            client.Dispose();
-            return Ok("Registered!");
+                return Ok("Email Already Exists!");
+            }
+            else
+            {
+                var user = new User
+                {
+                    Usr = usr.Usr,
+                    Fname = usr.Fname,
+                    Lname = usr.Lname,
+                    Company = usr.Company,
+                    Email = usr.Email,
+                    Subscription = 0,
+                    Nrequests = 100,
+                    Dateinserted = DateTime.Now,
+                    Apikey = GenerateApiKey(),
+                    VerifyCode = GenerateVerifyCode(),
+                    Passwd = BCrypt.Net.BCrypt.HashPassword(usr.Passwd)
+                };
+                client.Users.Add(user);
+                client.SaveChanges();
+                client.Dispose();
+                return Ok("Registered!");
+            }
+            
         }
         [HttpPost]
         public IActionResult Login([FromBody] User usr)
@@ -44,7 +61,8 @@ namespace EPG_Api.Controllers
                 Id = s.Id,
                 Usr = s.Usr,
                 Passwd = s.Passwd,
-                Email = s.Email
+                Email = s.Email,
+                Apikey = s.Apikey
             }).FirstOrDefault();
             if (user == null) return BadRequest(new { message = "Invalid Credentials!" });
             if (!BCrypt.Net.BCrypt.Verify(usr.Passwd, user.Passwd))
@@ -69,13 +87,15 @@ namespace EPG_Api.Controllers
             var finalString = new String(stringChars);
             return finalString;
         }
-        public string ApiKeyGen()
+        public string GenerateVerifyCode()
         {
-            var key = new byte[16];
+            var key = new byte[8];
             using (var generator = RandomNumberGenerator.Create())
+            {
                 generator.GetBytes(key);
-            string apiKey = Convert.ToBase64String(key);
-            return apiKey;
+            }
+            string verifycode = Convert.ToBase64String(key);
+            return verifycode;
         }
         public User GetByEmail(string email)
         {

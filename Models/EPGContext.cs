@@ -146,6 +146,10 @@ namespace EPG_Api.Models
                     .IsUnicode(false)
                     .HasColumnName("company");
 
+                entity.Property(e => e.VerifyCode)
+                    .IsUnicode(false)
+                    .HasColumnName("verifycode");
+
                 entity.Property(e => e.Dateinserted)
                     .HasColumnType("datetime")
                     .HasColumnName("dateinserted");
@@ -165,6 +169,7 @@ namespace EPG_Api.Models
                     .HasColumnName("lname");
 
                 entity.Property(e => e.Nrequests).HasColumnName("nrequests");
+                entity.Property(e => e.AccountStatus).HasColumnName("acountstatus");
 
                 entity.Property(e => e.Passwd)
                     .IsUnicode(false)
