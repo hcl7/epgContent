@@ -18,7 +18,6 @@ namespace EPG_Api.Modules
             var header = new JwtHeader(credentials);
 
             var claims = new[] {
-                //new Claim(JwtRegisteredClaimNames.Sub, usr.Usr),
                 new Claim(JwtRegisteredClaimNames.Email, usr.Email),
                 new Claim(JwtRegisteredClaimNames.Jti, Guid.NewGuid().ToString())
             };

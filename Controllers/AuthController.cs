@@ -38,7 +38,8 @@ namespace EPG_Api.Controllers
                     Nrequests = 100,
                     Dateinserted = DateTime.Now,
                     Apikey = GenerateApiKey(),
-                    VerifyCode = GenerateVerifyCode(),
+                    VerifyCode = GenVerCode(),
+                    AccountStatus = 0,
                     Passwd = BCrypt.Net.BCrypt.HashPassword(usr.Passwd)
                 };
                 client.Users.Add(user);
@@ -53,26 +54,32 @@ namespace EPG_Api.Controllers
         {
             if(usr == null)
             {
-                return Ok("Post is Empty!");
+                return BadRequest(new { message = "Bad Request" });
             }
-            Models.EPGContext client = new Models.EPGContext();
-            var user = client.Users.Where(x => x.Email == usr.Email).Select(s => new User()
+            else
             {
-                Id = s.Id,
-                Usr = s.Usr,
-                Passwd = s.Passwd,
-                Email = s.Email,
-                Apikey = s.Apikey
-            }).FirstOrDefault();
-            if (user == null) return BadRequest(new { message = "Invalid Credentials!" });
-            if (!BCrypt.Net.BCrypt.Verify(usr.Passwd, user.Passwd))
-            {
-                return BadRequest(new { message = "Invalid Credentials!" });
+                Models.EPGContext client = new Models.EPGContext();
+                var user = client.Users.Where(x => x.Email == usr.Email && x.AccountStatus == 1).Select(s => new User()
+                {
+                    Id = s.Id,
+                    Usr = s.Usr,
+                    Passwd = s.Passwd,
+                    Email = s.Email,
+                    Apikey = s.Apikey
+                }).FirstOrDefault();
+                if (user == null) return Ok(new { message = "Invalid Credentials" });
+                if (!BCrypt.Net.BCrypt.Verify(usr.Passwd, user.Passwd))
+                {
+                    return Ok(new { message = "Invalid Password" });
+                }
+                else
+                {
+                    var jwt = JwtService.Generate(user);
+                    Response.Cookies.Append("jwt", jwt, new CookieOptions { HttpOnly = true });
+                    client.Dispose();
+                    return Ok(new { jwt, user, message = "Logged In" });
+                }
             }
-            var jwt = JwtService.Generate(usr);
-            Response.Cookies.Append("jwt", jwt, new CookieOptions { HttpOnly = true });
-            client.Dispose();
-            return Ok(new { jwt, user, message = "Logged In!" });
         }
 
         public string GenerateApiKey()
@@ -87,6 +94,20 @@ namespace EPG_Api.Controllers
             var finalString = new String(stringChars);
             return finalString;
         }
+
+        public string GenVerCode()
+        {
+            var chars = "0123456789";
+            var stringChars = new char[8];
+            var random = new Random();
+            for (int i = 0; i < stringChars.Length; i++)
+            {
+                stringChars[i] = chars[random.Next(chars.Length)];
+            }
+            var finalString = new String(stringChars);
+            return finalString;
+        }
+
         public string GenerateVerifyCode()
         {
             var key = new byte[8];

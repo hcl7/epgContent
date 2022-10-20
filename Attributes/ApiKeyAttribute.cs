@@ -29,14 +29,17 @@ namespace EPG_Api.Attributes
             //var appSettings = context.HttpContext.RequestServices.GetRequiredService<IConfiguration>();
             //var apiKey = appSettings.GetValue<string>(APIKEYNAME);
             var apiKey = client.Users.Where(w => w.Apikey.Equals(extractedApikey)).Select(s => s.Apikey).FirstOrDefault();
-            if (!apiKey.Equals(extractedApikey))
+            if(extractedApikey != "")
             {
-                context.Result = new ContentResult
+                if (!apiKey.Equals(extractedApikey))
                 {
-                    StatusCode = 401,
-                    Content = "Unauthorized Client!..."
-                };
-                return;
+                    context.Result = new ContentResult
+                    {
+                        StatusCode = 401,
+                        Content = "Unauthorized Client!..."
+                    };
+                    return;
+                }
             }
             await next();
         }
