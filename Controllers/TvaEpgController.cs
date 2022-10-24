@@ -1,5 +1,4 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -37,6 +36,29 @@ namespace EPG_Api.Controllers
                 epg.Dispose();
             }
             return Ok(result);
+        }
+
+        [HttpPost]
+        public IActionResult StatusUpdate([FromForm] string channel)
+        {
+            if (!string.IsNullOrEmpty(channel))
+            {
+                try
+                {
+                    EPGContext epg = new EPGContext();
+                    epg.Epgs.Where(w => w.Status == 1 && w.Channel.Equals(channel)).ToList().ForEach(x => x.Status = 0);
+                    epg.SaveChanges();
+                    return Ok("Status Updated!");
+                }
+                catch (Exception ex)
+                {
+                    return Ok(ex.Message);
+                }
+            }
+            else
+            {
+                return Ok("Null Channel");
+            }
         }
 
         [HttpPost]
@@ -116,6 +138,7 @@ namespace EPG_Api.Controllers
                     return BadRequest("Id Mismatch!");
                 }
                 var result = epg.Epgs.FirstOrDefault(x => x.Id == id);
+                result.Eid = data.Eid;
                 result.StartTime = data.StartTime;
                 result.Duration = data.Duration;
                 result.ShortAlb = data.ShortAlb;
