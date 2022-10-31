@@ -82,6 +82,29 @@ namespace EPG_Api.Controllers
             }
         }
 
+        [HttpPost]
+        public IActionResult UserStatusUpdate([FromForm] string code)
+        {
+            if (!string.IsNullOrEmpty(code))
+            {
+                try
+                {
+                    EPGContext epg = new EPGContext();
+                    epg.Users.Where(w => w.VerifyCode.Equals(code)).ToList().ForEach(x => x.AccountStatus = 1);
+                    epg.SaveChanges();
+                    return Ok("User Account Activated!");
+                }
+                catch (Exception ex)
+                {
+                    return Ok(ex.Message);
+                }
+            }
+            else
+            {
+                return Ok("Null Code");
+            }
+        }
+
         public string GenerateApiKey()
         {
             var chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";

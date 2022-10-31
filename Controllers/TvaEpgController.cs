@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Linq;
 using EPG_Api.Attributes;
 using EPG_Api.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace EPG_Api.Controllers
 {
