@@ -89,10 +89,22 @@ namespace EPG_Api.Controllers
             {
                 try
                 {
-                    EPGContext epg = new EPGContext();
-                    epg.Users.Where(w => w.VerifyCode.Equals(code)).ToList().ForEach(x => x.AccountStatus = 1);
-                    epg.SaveChanges();
-                    return Ok("User Account Activated!");
+                    EPGContext client = new EPGContext();
+                    var user = client.Users.Where(x => x.VerifyCode.Equals(code)).Select(s => new User()
+                    {
+                        VerifyCode = s.VerifyCode
+                    }).FirstOrDefault();
+
+                    if(user != null)
+                    {
+                        client.Users.Where(w => w.VerifyCode.Equals(code)).ToList().ForEach(x => x.AccountStatus = 1);
+                        client.SaveChanges();
+                        return Ok("User Account Activated!");
+                    }
+                    else
+                    {
+                        return Ok("Invalid Code!");
+                    }
                 }
                 catch (Exception ex)
                 {
